@@ -1,0 +1,367 @@
+<!-- <!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>MAP_Street View Navigation</title>
+  
+  <!-- LeafletのCSS -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">-->
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>MAP_Street View Navigation</title>
+
+    <!-- スマートフォン対応 -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no">
+  
+
+  <!-- LeafletのCSSなどの下に追加してください -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%22-5%22 y=%22.9em%22 font-size=%2252%22>🍙📍</text><text x=%2245%22 y=%22.9em%22 font-size=%2252%22>🍲🗺️</text></svg>">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <!-- LeafletのCSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PannellumのCSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+
+    <!-- Pannellum -->
+    <script
+        type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js">
+    </script>
+
+    <!-- =========================================================
+         スマートフォン・タブレット・PC対応CSS
+         ========================================================= -->
+    <style>
+
+        /* ---------------------------------------------------------
+           基本設定
+           --------------------------------------------------------- */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+
+        /* ---------------------------------------------------------
+           画面全体
+           --------------------------------------------------------- */
+
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+
+        /* ---------------------------------------------------------
+           地図
+           --------------------------------------------------------- */
+
+        #map {
+            width: 100%;
+            height: 45vh;
+            height: 45dvh;
+            min-height: 280px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        /* Leaflet本体も親の大きさに合わせる */
+        #map .leaflet-container {
+            width: 100%;
+            height: 100%;
+        }
+
+
+        /* ---------------------------------------------------------
+           360° Street View
+           --------------------------------------------------------- */
+
+        #street {
+            width: 100%;
+            height: 45vh;
+            height: 45dvh;
+            min-height: 280px;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Pannellumを画面いっぱいに合わせる */
+        #street .pnlm-container,
+        #street .pnlm-render-container {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+
+        /* ---------------------------------------------------------
+           タイトル文字
+           clamp()
+           最小18px ～ 画面幅に応じて変化 ～ 最大28px
+           --------------------------------------------------------- */
+
+        .title-text {
+            font-size: clamp(18px, 3vw, 28px);
+            line-height: 1.4;
+            max-width: 100%;
+            word-break: break-word;
+        }
+
+
+        /* ---------------------------------------------------------
+           「ここへ行く」ボタン
+           --------------------------------------------------------- */
+
+        .control-btn {
+            min-width: 160px;
+            min-height: 48px;
+            padding: 10px 20px;
+            touch-action: manipulation;
+        }
+
+
+        /* ---------------------------------------------------------
+           「道案内を開始」ボタン
+           --------------------------------------------------------- */
+
+        .rainbow-btn {
+            display: flex;
+
+            width: min(90%, 500px);
+            min-height: 56px;
+
+            margin-left: auto;
+            margin-right: auto;
+
+            align-items: center;
+            justify-content: center;
+
+            touch-action: manipulation;
+        }
+
+
+        /* ボタン文字も画面幅に合わせる */
+        .btn-content {
+            font-size: clamp(15px, 4vw, 20px);
+            max-width: 100%;
+            word-break: break-word;
+            text-align: center;
+        }
+
+
+        /* ---------------------------------------------------------
+           長押しプログレス表示
+           --------------------------------------------------------- */
+
+        .press-indicator {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+
+            width: 0;
+            height: 5px;
+
+            z-index: 9999;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           スマートフォン用
+           599px以下
+           ========================================================= */
+
+        @media (max-width: 599px) {
+
+            .app-container {
+                width: 100%;
+                min-height: 100dvh;
+            }
+
+            #map {
+                width: 100%;
+                height: 45dvh;
+                min-height: 250px;
+            }
+
+            #street {
+                width: 100%;
+                height: 45dvh;
+                min-height: 250px;
+            }
+
+            .title-text {
+                font-size: clamp(16px, 5vw, 20px);
+            }
+
+            .control-btn {
+                width: calc(100% - 28px);
+                max-width: 360px;
+                min-height: 50px;
+            }
+
+            .rainbow-btn {
+                width: calc(100% - 20px);
+                min-height: 54px;
+            }
+
+            .btn-content {
+                font-size: clamp(15px, 4vw, 18px);
+            }
+        }
+
+
+        /* =========================================================
+           小型スマートフォン用
+           ========================================================= */
+
+        @media (max-width: 380px) {
+
+            #map,
+            #street {
+                min-height: 230px;
+            }
+
+            .title-text {
+                font-size: 16px;
+            }
+
+            .btn-content {
+                font-size: 15px;
+            }
+        }
+
+
+        /* =========================================================
+           横向きスマートフォン用
+           ========================================================= */
+
+        @media (max-width: 900px) and (orientation: landscape) {
+
+            #map,
+            #street {
+                height: 70vh;
+                min-height: 240px;
+            }
+        }
+
+
+        /* =========================================================
+           iPhone / Safariなど
+           ========================================================= */
+
+        @supports (height: 100dvh) {
+
+            .app-container {
+                min-height: 100dvh;
+            }
+
+            #map {
+                height: 45dvh;
+            }
+
+            #street {
+                height: 45dvh;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+  <!-- 長押しを検知するメインコンテナ -->
+  <div class="app-container" id="long-press-area">
+    
+    <!-- 【上部】炊き出し・目的地検索（白色エリア） -->
+    <div class="section top-section">
+      <div class="section-header">
+        <h2 class="title-text text-dark">🗺️ 炊き出し・目的地検索</h2>
+      </div>
+      
+      <!-- 目的地選択リスト表示エリア -->
+      <div id="places"></div>
+
+      <!-- 地図表示エリア（2つ目のHTMLのLeafletマップ） -->
+      <div id="map"></div>
+
+      <!-- 1枚目の画像を重ねる/確認用の枠（不要ならCSSで非表示にしてください） -->
+      <!-- <div class="image-wrapper">
+        <img src="map_search.png" alt="目的地検索結果" class="embedded-image" style="display: none;">
+      </div>
+    </div> -->
+
+    <!-- 【下部】360° Street View表示（黒色エリア） -->
+    <div class="section bottom-section">
+      <div class="section-header">
+        <h2 class="title-text text-light">📸 360° Street View表示</h2>
+      </div>
+
+      <!-- ストリートビュー表示エリア -->
+      <div id="street">
+        <span>360° Street View表示</span>
+        <!-- ここへ行くボタン -->
+        <button class="control-btn" onclick="startRoute()">ここへ行く</button>
+      </div>
+
+      <!-- 2枚目の画像用の枠（不要ならCSSで非表示にしてください） -->
+      <!-- <div class="image-wrapper">
+        <img src="street_view.png" alt="ストリートビュー" class="embedded-image" style="display: none;">
+      </div>
+    </div> -->
+
+    <!-- 長押しでふわっと浮かび上がる虹色スケルトンボタン -->
+    <a href="https://www.google.com/maps/search/?api=1&query=中村公園+競輪場西の公園" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="rainbow-btn" 
+       id="navigation-btn">
+      <span class="btn-content">🗺️ 道案内を開始</span>
+    </a>
+
+    <!-- 長押し中のプログレス視覚エフェクト -->
+    <div class="press-indicator" id="press-indicator"></div>
+  </div>
+
+  <!-- LeafletのJavaScript -->
+  <!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> -->
+  <!-- LeafletのJavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- 外部JavaScript（長押し処理やマップ制御） -->
+  <!-- 外部JavaScript（長押し処理やマップ制御） -->
+  <script src="app0.js"></script>
+</body> 
+</html>

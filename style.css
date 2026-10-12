@@ -1,0 +1,192 @@
+  
+    /* 2つのコードのスタイルシートを競合しないように整理・統合 */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    /* 地図とストリートビュー表示エリアのサイズ調整 */
+    #map {
+      height: 50vh;
+      width: 100%;
+    }
+
+    /* 下部のストリートビュー領域（黒色エリア） */
+    #street {
+      height: 40vh;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      position: relative;
+    }
+
+    /* 「ここへ行く」ボタン等の基本スタイル */
+    .control-btn {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .control-btn:hover {
+      background-color: #0056b3;
+    }
+
+
+/* 1. 【初期状態】吹き出し全体の枠と背景 */
+.leaflet-popup-content-wrapper {
+  background: #fff; /* 中身の背景は白 */
+  /* 👈 枠線を「transparent（透明）」にして、最初の画面では完全に非表示にしました */
+  border: 25px solid transparent; 
+  border-radius: 28px; /* 角の丸み */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* 軽い影のみ表示 */
+  
+  transition: box-shadow 0.5s ease;
+  position: relative;
+}
+
+/* 疑似要素（::after）極太グラデーション枠の裏仕込み */
+.leaflet-popup-content-wrapper::after {
+  content: '';
+  position: absolute;
+  top: -25px; left: -25px; right: -25px; bottom: -25px; 
+  border-radius: 28px;
+  
+  /* 斜めの綺麗なグラデーション */
+  background: linear-gradient(135deg, 
+    #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff,
+    #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff
+  );
+  background-size: 200% 200%;
+  
+  /* 初期状態は完全に透明（触る前は1ミリも見えません） */
+  opacity: 0;
+  z-index: -1;
+  
+  /* 0.5秒かけてふわっと浮き上がらせる設定 */
+  transition: opacity 0.5s ease;
+}
+
+/* 2. 📌【連動状態】JSで「active-rainbow」が合体した瞬間 */
+.leaflet-popup-content-wrapper.active-rainbow {
+  /* box-shadow: 0 15px 40px rgba(255, 0, 128, 0.6); /* 影をダイナミックにして浮遊感を出す */
+
+animation: rainbow-flow-speedy 2s linear infinite, 
+             rainbow-shadow 6s linear infinite; /* 👈 影を虹色に変色させるアニメーションを追加 */
+}
+/* 📌 影（box-shadow）の色を滑らかにレインボーに変化させる定義 */
+@keyframes rainbow-shadow {
+  0% {
+    box-shadow: 0 15px 40px rgba(255, 0, 0, 0.6); /* 赤 */
+  }
+  17% {
+    box-shadow: 0 15px 40px rgba(255, 127, 0, 0.6); /* 橙 */
+  }
+  33% {
+    box-shadow: 0 15px 40px rgba(255, 255, 0, 0.6); /* 黄 */
+  }
+  50% {
+    box-shadow: 0 15px 40px rgba(0, 255, 0, 0.6); /* 緑 */
+  }
+  67% {
+    box-shadow: 0 15px 40px rgba(0, 0, 255, 0.6); /* 青 */
+  }
+  83% {
+    box-shadow: 0 15px 40px rgba(75, 0, 130, 0.6); /* 藍 */
+  }
+  100% {
+    box-shadow: 0 15px 40px rgba(255, 0, 0, 0.6); /* 赤（ループ用） */
+  }
+}
+/* レインボーがダイナミックにぐるぐる流れるアニメーション */
+@keyframes rainbow-flow-speedy {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* 下に出ている三角形（しっぽ）部分 */
+.leaflet-popup-tip {
+  background: #fff;
+  border: 1px solid transparent; /* しっぽの線も最初は無し */
+  transition: border-color 0.5s ease;
+}
+
+/* 連動時、しっぽの枠線もほんのりオレンジに変化 */
+.leaflet-popup-content-wrapper.active-rainbow + .leaflet-popup-tip-container .leaflet-popup-tip {
+  border-color: #ff7f00;
+}
+/* 📌 黒い背景ストリートビュー案内画面のスタイル */
+.street-view-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #111111; /* 黒い背景 */
+  z-index: 9999;             /* 地図より必ず手前に表示 */
+  display: none;             /* 最初は隠しておく */
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.8s ease; /* ふわっとフェードイン */
+}
+
+/* フェードイン表示された時のクラス */
+.street-view-overlay.show {
+  opacity: 1;
+}
+
+/* 中央のコンテンツエリア */
+.overlay-content {
+  text-align: center;
+  color: #ffffff;
+  font-family: sans-serif;
+}
+
+/* タイトル文字「360° Street View表示」 */
+.overlay-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* 「ここへ行く」ボタン */
+.overlay-button {
+  background-color: #007bff; /* 青いボタン */
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.overlay-button:hover {
+  background-color: #0056b3; /* ホバー時に少し暗い青にする */
+}
+
+#street {
+
+  opacity:0;
+
+  transition: opacity 2s ease;
+
+}
