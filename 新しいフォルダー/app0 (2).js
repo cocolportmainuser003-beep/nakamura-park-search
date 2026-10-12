@@ -227,7 +227,7 @@ setTimeout(() => {
   
   // Googleマップの「共有」から取得できる埋め込み用のURLをそのまま使用する
   // ※以下は若宮大通公園高架下のストリートビューの埋め込みURLの例です
-//   const embedUrl = "https://www.google.com/maps/embed?pb=!1m4!1m8!1m3!1d3261.64654316041!2d136.9061!3d35.1612!3m2!1i1024!2i768!4f13.1!2m1!1z6Iul5a6u5aSn6YCa5YWs5ZyS44CA44Ky44O844OI44Oc44O844Or5aC0!5e1!3m2!1sja!2sjp!4v1700000000000";
+//   const embedUrl = "";
 
 //   // 1. まず、全体を包むコンテナ、iframe、ボタンをひとまとめにしてHTMLを流し込む[cite: 3]
 //   streetEl.innerHTML = `

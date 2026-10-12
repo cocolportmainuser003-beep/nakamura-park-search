@@ -39,7 +39,9 @@ const destinations = [
     name: "若宮大通公園 ゲートボール場",
     coords: [35.1612, 136.9061],
     panorama: "https://pannellum.org/images/alma.jpg",
-    embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3261.642192131341!2d136.90382897627443!3d35.161306958448375!2m3!1f349.52!2f88.3!2f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6003709067b96b5b%3A0xbbfdf3ff1da7caa7!2z6Iul5a6u5aSn6YCa5YWs5ZyS44CA44Ky44O844OI44Oc44O844Or5aC0!5e1!3m2!1sja!2sjp!4v1721280000000!5m2!1sja!2sjp"
+    // embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3261.642192131341!2d136.90382897627443!3d35.161306958448375!2m3!1f349.52!2f88.3!2f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6003709067b96b5b%3A0xbbfdf3ff1da7caa7!2z6Iul5a6u5aSn6YCa5YWs5ZyS44CA44Ky44O844OI44Oc44O844Or5aC0!5e1!3m2!1sja!2sjp!4v1721280000000!5m2!1sja!2sjp"
+    embedUrl: "https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1sQ7sKuH0cUn5kEMYFcKd1-Q!2m2!1d35.161725!2d136.9122149!3f59.376!4f0!5f0.7820865974627469"
+ 
   },
   {
     id: 2,
@@ -202,6 +204,32 @@ function loadCustomStreetView() {
 function loadCustomStreetViewEmbed() {
   const streetEl = document.getElementById('street');
   if (!streetEl) return;
+
+  // streetEl.innerHTML = `
+
+  // <div id="street-img-container"
+  // style="
+  // width:100%;
+  // height:100%;
+  // opacity:0;
+  // transition:opacity 1.5s ease;
+  // ">
+
+  // <iframe
+  // width="100%"
+  // height="100%"
+  // style="border:0"
+  // allowfullscreen
+  // loading="lazy"
+  // src="
+  // https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1sQ7sKuH0cUn5kEMYFcKd1-Q!2m2!1d35.161725!2d136.9122149!3f59.376!4f0!5f0.7820865974627469
+  // ">
+  // </iframe>
+
+  // </div>
+  
+
+  // `;
 
   streetEl.innerHTML = `
     <div id="street-img-container"
